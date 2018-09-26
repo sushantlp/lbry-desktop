@@ -7,6 +7,7 @@ import ThreeViewer from 'component/viewers/threeViewer';
 import DocumentViewer from 'component/viewers/documentViewer';
 import DocxViewer from 'component/viewers/docxViewer';
 import HtmlViewer from 'component/viewers/htmlViewer';
+import AudioVideoViewer from 'component/viewers/audioVideoViewer';
 
 type Props = {
   mediaType: string,
@@ -88,7 +89,7 @@ class FileRender extends React.PureComponent<Props> {
   }
 
   renderViewer() {
-    const { source, mediaType, currentTheme } = this.props;
+    const { source, mediaType, currentTheme, poster } = this.props;
 
     // Extract relevant data to render file
     const { stream, fileType, contentType, downloadPath } = source;
@@ -112,6 +113,14 @@ class FileRender extends React.PureComponent<Props> {
           webpreferences="sandbox=true,contextIsolation=true,webviewTag=false,enableRemoteModule=false,devTools=false"
         />
       ),
+      video: (
+        <AudioVideoViewer
+          source={{ downloadPath, fileName }}
+          contentType={contentType}
+          poster={poster}
+        />
+      ),
+      audio: <AudioVideoViewer source={{ downloadPath, fileName }} contentType={contentType} />,
       // Add routes to viewer...
     };
 
