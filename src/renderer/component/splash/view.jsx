@@ -53,7 +53,6 @@ export default class SplashScreen extends React.PureComponent<Props, State> {
 
   componentDidMount() {
     const { checkDaemonVersion } = this.props;
-
     this.adjustErrorTimeout();
     Lbry.connect()
       .then(checkDaemonVersion)
@@ -93,12 +92,21 @@ export default class SplashScreen extends React.PureComponent<Props, State> {
   }
 
   updateStatus() {
+    // @if TARGET='app'
     Lbry.status().then(status => {
       this.updateStatusCallback(status);
     });
+    // @endif
+    // @if TARGET='web'
+    Lbry.status().then(status => {
+      Lbry.account_list().then(account_list => {
+        this.updateStatusCallback(status, account_list);
+      });
+    });
+    // @endif
   }
 
-  updateStatusCallback(status: Status) {
+  updateStatusCallback(status: Status, account_list) {
     const { notifyUnlockWallet, authenticate, modal } = this.props;
     const { launchedModal } = this.state;
 
@@ -117,11 +125,20 @@ export default class SplashScreen extends React.PureComponent<Props, State> {
     const { wallet, blockchain_headers: blockchainHeaders } = status;
 
     // If the wallet is locked, stop doing anything and make the user input their password
+
+    // @if TARGET='app'
     if (wallet && wallet.is_locked) {
       // Clear the error timeout, it might sit on this step for a while until someone enters their password
       if (this.timeout) {
         clearTimeout(this.timeout);
       }
+    // @endif
+    // @if TARGET='web'
+    if (account_list && account_list.encrypted) {
+      this.setState({
+        isRunning: true,
+      });
+    // @endif
 
       // Make sure there isn't another active modal (like INCOMPATIBLE_DAEMON)
       if (launchedModal === false && !modal) {
