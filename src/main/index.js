@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 // Module imports
+// @if TARGET='app'
 import keytar from 'keytar';
 import SemVer from 'semver';
 import findProcess from 'find-process';
@@ -64,7 +65,6 @@ if (isDev) {
   process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 }
 
-// @if TARGET='app'
 app.on('ready', async () => {
   // Windows WMIC returns lbrynet start with 2 spaces. https://github.com/yibn2008/find-process/issues/18
   const processListArgs = process.platform === 'win32' ? 'lbrynet  start' : 'lbrynet start';
@@ -89,7 +89,6 @@ app.on('ready', async () => {
     });
     daemon.launch();
   }
-  // @endif
 
   startSandbox();
 
@@ -319,3 +318,4 @@ const isSecondInstance = app.makeSingleInstance(argv => {
 if (isSecondInstance) {
   app.exit();
 }
+// @endif

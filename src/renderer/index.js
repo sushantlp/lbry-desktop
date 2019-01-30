@@ -30,10 +30,12 @@ import app from './app';
 import analytics from './analytics';
 import doLogWarningConsoleMessage from './logWarningConsoleMessage';
 
-const { autoUpdater } = remote.require('electron-updater');
 const APPPAGEURL = 'lbry://?';
 
+// @if TARGET='app'
+const { autoUpdater } = remote.require('electron-updater');
 autoUpdater.logger = remote.require('electron-log');
+// @endif
 
 if (process.env.LBRY_API_URL) {
   Lbryio.setLocalApi(process.env.LBRY_API_URL);
