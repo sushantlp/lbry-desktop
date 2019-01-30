@@ -5,6 +5,14 @@ import windowStateKeeper from 'electron-window-state';
 import setupBarMenu from './menu/setupBarMenu';
 
 export default appState => {
+  let mouseForwardBack = false;
+  try {
+    // eslint-disable-next-line import/no-extraneous-dependencies,global-require
+    mouseForwardBack = require('mouse-forward-back');
+  } catch (e) {
+    // Do nothing
+  }
+
   // Get primary display dimensions from Electron.
   const { width, height } = screen.getPrimaryDisplay().workAreaSize;
 
@@ -72,6 +80,7 @@ export default appState => {
   }
 
   setupBarMenu();
+
   // Windows back/forward mouse navigation
   window.on('app-command', (e, cmd) => {
     switch (cmd) {
@@ -84,18 +93,20 @@ export default appState => {
       default: // Do nothing
     }
   });
-  // Mac back/forward swipe navigation
-  window.on('swipe', (e, dir) => {
-    switch (dir) {
-      case 'left':
-        window.webContents.send('navigate-backward', null);
-        break;
-      case 'right':
-        window.webContents.send('navigate-forward', null);
-        break;
-      default: // Do nothing
-    }
-  });
+  // Linux back/forward mouse navigation https://github.com/jostrander/mouse-forward-back
+  if (mouseForwardBack) {
+    mouseForwardBack.register(direction => {
+      switch (direction) {
+        case 'back':
+          window.webContents.send('navigate-backward', null);
+          break;
+        case 'forward':
+          window.webContents.send('navigate-forward', null);
+          break;
+        default: // Do nothing
+      }
+    }, window.getNativeWindowHandle());
+  }
 
   window.on('close', event => {
     if (!appState.isQuitting && !appState.autoUpdateAccepted) {

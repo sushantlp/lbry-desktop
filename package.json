@@ -133,6 +133,9 @@
     "webpack-build-notifier": "^0.1.23",
     "yarnhook": "^0.2.0"
   },
+  "optionalDependencies": {
+    "mouse-forward-back": "^1.0.1"
+  },
   "engines": {
     "node": ">=7",
     "yarn": "^1.3"
