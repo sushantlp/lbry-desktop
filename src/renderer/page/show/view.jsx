@@ -39,27 +39,27 @@ class ShowPage extends React.PureComponent<Props> {
 
     let innerContent = '';
 
-    if ((isResolvingUri && !claim) || !claim) {
+    if (isResolvingUri || !claim || !claim.name) {
       innerContent = (
         <Page notContained>
           {isResolvingUri && <BusyIndicator message={__('Loading decentralized data...')} />}
-          {claim === null && !isResolvingUri && (
-            <span className="empty">{__("There's nothing at this location.")}</span>
-          )}
+          {!isResolvingUri && <span className="empty">{__("There's nothing available at this location.")}</span>}
+          {!isResolvingUri && claim && claim.error && <span className="empty">{__(" Backend message: " + claim.error)}</span>}
         </Page>
       );
-    } else if (claim && claim.name.length && claim.name[0] === '@') {
+    } else if (claim.name.length && claim.name[0] === '@') {
       innerContent = <ChannelPage uri={uri} />;
-    } else if (claim) {
+    } else {
       let isClaimBlackListed = false;
 
+      if (blackListedOutpoints && blackListedOutpoints.length) {
       for (let i = 0; i < blackListedOutpoints.length; i += 1) {
         const outpoint = blackListedOutpoints[i];
         if (outpoint.txid === claim.txid && outpoint.nout === claim.nout) {
           isClaimBlackListed = true;
           break;
         }
-      }
+      }}
 
       if (isClaimBlackListed) {
         innerContent = (
