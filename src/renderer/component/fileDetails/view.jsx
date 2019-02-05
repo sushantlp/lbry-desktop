@@ -92,6 +92,11 @@ class FileDetails extends PureComponent<Props> {
               {': '}
               {license}
             </div>
+            <div>
+              {__('Claim ID')}
+              {': '}
+              {claim.claim_id}
+            </div>
             {downloadPath && (
               <div>
                 {__('Downloaded to')}

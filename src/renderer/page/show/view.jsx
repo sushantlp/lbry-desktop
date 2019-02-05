@@ -42,15 +42,12 @@ class ShowPage extends React.PureComponent<Props> {
     // But will work for related content and manually typing in a url
     if (claim) {
       // Successfully fetched claim on the new page
-      if (previousProps.uri !== uri || !previousProps.claim) {
-        let updatedUriValue = `lbry://${claim.name}`;
-
-        if (uri.includes('#')) {
-          updatedUriValue += `#${claim.claim_id}`;
-        }
-
-        updateSearchQuery(updatedUriValue);
-      }
+      let regex = /^(lbry:\/\/).+?([:$#].+)?$/;
+      let groups = regex.exec(uri);
+      let updatedUriValue = uri;
+      if (groups && groups.length > 1)
+        updatedUriValue = groups[1] + claim.name + (groups[2] || "");
+      updateSearchQuery(updatedUriValue);
     }
   }
 
