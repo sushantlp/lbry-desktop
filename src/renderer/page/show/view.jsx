@@ -34,6 +34,26 @@ class ShowPage extends React.PureComponent<Props> {
     }
   }
 
+  componentDidUpdate(previousProps) {
+    const { claim, uri, updateSearchQuery } = this.props;
+
+    // Quick hack to populate the url for name normalization
+    // This won't work for clicking file cards on the home page
+    // But will work for related content and manually typing in a url
+    if (claim) {
+      // Successfully fetched claim on the new page
+      if (previousProps.uri !== uri || !previousProps.claim) {
+        let updatedUriValue = `lbry://${claim.name}`;
+
+        if (uri.includes('#')) {
+          updatedUriValue += `#${claim.claim_id}`;
+        }
+
+        updateSearchQuery(updatedUriValue);
+      }
+    }
+  }
+
   render() {
     const { claim, isResolvingUri, uri, blackListedOutpoints } = this.props;
 
@@ -43,8 +63,12 @@ class ShowPage extends React.PureComponent<Props> {
       innerContent = (
         <Page notContained>
           {isResolvingUri && <BusyIndicator message={__('Loading decentralized data...')} />}
-          {!isResolvingUri && <span className="empty">{__("There's nothing available at this location.")}</span>}
-          {!isResolvingUri && claim && claim.error && <span className="empty">{__(" Backend message: " + claim.error)}</span>}
+          {!isResolvingUri && (
+            <span className="empty">{__("There's nothing available at this location.")}</span>
+          )}
+          {!isResolvingUri &&
+            claim &&
+            claim.error && <span className="empty">{__(' Backend message: ' + claim.error)}</span>}
         </Page>
       );
     } else if (claim.name.length && claim.name[0] === '@') {
@@ -53,13 +77,14 @@ class ShowPage extends React.PureComponent<Props> {
       let isClaimBlackListed = false;
 
       if (blackListedOutpoints && blackListedOutpoints.length) {
-      for (let i = 0; i < blackListedOutpoints.length; i += 1) {
-        const outpoint = blackListedOutpoints[i];
-        if (outpoint.txid === claim.txid && outpoint.nout === claim.nout) {
-          isClaimBlackListed = true;
-          break;
+        for (let i = 0; i < blackListedOutpoints.length; i += 1) {
+          const outpoint = blackListedOutpoints[i];
+          if (outpoint.txid === claim.txid && outpoint.nout === claim.nout) {
+            isClaimBlackListed = true;
+            break;
+          }
         }
-      }}
+      }
 
       if (isClaimBlackListed) {
         innerContent = (

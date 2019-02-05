@@ -4,6 +4,7 @@ import {
   makeSelectClaimForUri,
   makeSelectIsUriResolving,
   selectBlackListedOutpoints,
+  doUpdateSearchQuery,
 } from 'lbry-redux';
 import ShowPage from './view';
 
@@ -15,6 +16,7 @@ const select = (state, props) => ({
 
 const perform = dispatch => ({
   resolveUri: uri => dispatch(doResolveUri(uri)),
+  updateSearchQuery: query => dispatch(doUpdateSearchQuery(query)),
 });
 
 export default connect(
