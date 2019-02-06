@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 // Module imports
 // @if TARGET='app'
+console.log('APP????????????????????????');
 import keytar from 'keytar';
 import SemVer from 'semver';
 import findProcess from 'find-process';
@@ -318,4 +319,8 @@ const isSecondInstance = app.makeSingleInstance(argv => {
 if (isSecondInstance) {
   app.exit();
 }
+// @endif
+
+// @if TARGET='web'
+console.log('WEB????');
 // @endif

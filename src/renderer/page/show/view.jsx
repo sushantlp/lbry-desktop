@@ -43,24 +43,24 @@ class ShowPage extends React.PureComponent<Props> {
       innerContent = (
         <Page notContained>
           {isResolvingUri && <BusyIndicator message={__('Loading decentralized data...')} />}
-          {claim === null && !isResolvingUri && (
-            <span className="empty">{__("There's nothing at this location.")}</span>
-          )}
+          {claim === null &&
+            !isResolvingUri && (
+              <span className="empty">{__("There's nothing at this location.")}</span>
+            )}
         </Page>
       );
     } else if (claim && claim.name.length && claim.name[0] === '@') {
       innerContent = <ChannelPage uri={uri} />;
     } else if (claim) {
-      const isClaimBlackListed = false;
+      let isClaimBlackListed = false;
 
-      // Commented until I figure out why blacklistedoutpoints is empty. — Andrey
-      // for (let i = 0; i < blackListedOutpoints.length; i += 1) {
-      //   const outpoint = blackListedOutpoints[i];
-      //   if (outpoint.txid === claim.txid && outpoint.nout === claim.nout) {
-      //     isClaimBlackListed = true;
-      //     break;
-      //   }
-      // }
+      for (let i = 0; i < blackListedOutpoints.length; i += 1) {
+        const outpoint = blackListedOutpoints[i];
+        if (outpoint.txid === claim.txid && outpoint.nout === claim.nout) {
+          isClaimBlackListed = true;
+          break;
+        }
+      }
 
       if (isClaimBlackListed) {
         innerContent = (

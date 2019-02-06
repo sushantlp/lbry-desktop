@@ -3,7 +3,7 @@ import React from 'react';
 import { remote } from 'electron';
 // @endif
 // @if TARGET='web'
-import { remote } from '../../../../web/stubs';
+import { remote } from 'web/stubs';
 // @endif
 import fs from 'fs';
 import path from 'path';
@@ -129,10 +129,10 @@ class MediaPlayer extends React.PureComponent {
       mediaElement.volume = volume;
       mediaElement.addEventListener('dblclick', this.toggleFullScreenVideo);
 
-
-    // if (this.isSupportedFile()) {
-    //   this.renderFile();
-    // }
+      // if (this.isSupportedFile()) {
+      //   this.renderFile();
+      // }
+    }
   }
 
   componentDidUpdate() {
@@ -239,8 +239,12 @@ class MediaPlayer extends React.PureComponent {
       downloadPath,
       fileType: path.extname(fileName).substring(1),
       // // Readable stream from file
-      // stream: opts => fs.createReadStream(downloadPath, opts),
+      stream: opts => fs.createReadStream(downloadPath, opts),
     };
+
+    // Blob url from stream
+    fileSource.blob = callback =>
+      toBlobURL(fs.createReadStream(downloadPath), contentType, callback);
 
     this.setState({ fileSource });
   }
@@ -302,16 +306,23 @@ class MediaPlayer extends React.PureComponent {
   }
 
   render() {
-    const { mediaType, poster } = this.props;
+    const { mediaType } = this.props;
     const { fileSource } = this.state;
 
-    const isFileType = this.isSupportedFile();
+    const isFileType = this.fileType();
     const isFileReady = fileSource && isFileType;
 
     return (
       <React.Fragment>
-        {!isFileReady && <LoadingScreen status="loadingStatus" spinner />}
-        {isFileReady && <FileRender source={fileSource} mediaType={mediaType} poster={poster} />}
+        {loadingStatus && <LoadingScreen status={loadingStatus} spinner={isLoading} />}
+        {isFileReady && <FileRender source={fileSource} mediaType={mediaType} />}
+        <div
+          className={'content__view--container'}
+          style={{ opacity: isLoading ? 0 : 1 }}
+          ref={container => {
+            this.media = container;
+          }}
+        />
       </React.Fragment>
     );
   }

@@ -8,8 +8,7 @@ if (PROCESS_ARGV) {
   PROCESS_ARGV = JSON.parse(PROCESS_ARGV);
 }
 
-const isDev = PROCESS_ARGV && PROCESS_ARGV.original &&
-  (PROCESS_ARGV.original.indexOf('dev') !== -1);
+const isDev = PROCESS_ARGV && PROCESS_ARGV.original && PROCESS_ARGV.original.indexOf('dev') !== -1;
 
 module.exports = {
   module: {
@@ -29,11 +28,11 @@ module.exports = {
             options: {
               TARGET: 'app',
               ppOptions: {
-                type: 'js'
-              }
+                type: 'js',
+              },
             },
           },
-        ]
+        ],
       },
     ],
   },
@@ -42,9 +41,11 @@ module.exports = {
     modules: [ELECTRON_RENDERER_PROCESS_ROOT, 'node_modules', __dirname],
     extensions: ['.js', '.jsx', '.scss'],
   },
-  plugins: isDev ? [
-    new FilewatcherPlugin({
-      watchFileRegex: [require.resolve('lbry-redux'), require.resolve('lbryinc')],
-    }),
-  ] : [],
+  plugins: isDev
+    ? [
+        new FilewatcherPlugin({
+          watchFileRegex: [require.resolve('lbry-redux'), require.resolve('lbryinc')],
+        }),
+      ]
+    : [],
 };

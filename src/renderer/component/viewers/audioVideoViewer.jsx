@@ -28,18 +28,6 @@ class AudioVideoViewer extends React.PureComponent<Props> {
     // TODO: Determine changes needed for windows
     const path = `${basePath}${encodedFileName}`;
 
-    // Another alternative, maybe we don't need to do anything in the main electron process?
-    // get blob url, then set as source and call videojs()
-    // toBlobURL(fs.createReadStream(downloadPath), (err, url) => {
-    // if (err) return console.error(err.message)
-    // console.log(url);
-    // const sources = [
-    //   {
-    //     src: url,
-    //     type: contentType
-    //   }
-    // ]
-
     const sources = [
       {
         src: path,
@@ -56,7 +44,6 @@ class AudioVideoViewer extends React.PureComponent<Props> {
     };
 
     this.player = videojs(this.videoNode, videoJsOptions, () => {});
-    // })
   }
 
   componentWillUnmount() {

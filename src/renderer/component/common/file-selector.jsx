@@ -4,7 +4,7 @@ import React from 'react';
 import { remote } from 'electron';
 // @endif
 // @if TARGET='web'
-import { remote } from '../../../web/stubs';
+import { remote } from 'web/stubs';
 // @endif
 import Button from 'component/button';
 import { FormRow } from 'component/common/form';

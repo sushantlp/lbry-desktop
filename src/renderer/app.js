@@ -4,7 +4,7 @@ import Path from 'path';
 import y18n from 'y18n';
 // @endif
 // @if TARGET='web'
-import { y18n } from '../web/stubs';
+import { y18n } from 'web/stubs';
 // @endif
 
 // @if TARGET='app'

@@ -6,7 +6,7 @@ import * as MODALS from 'constants/modal_types';
 import { remote } from 'electron';
 // @endif
 // @if TARGET='web'
-import { remote } from '../../../web/stubs';
+import { remote } from 'web/stubs';
 // @endif
 
 const win = remote.BrowserWindow.getFocusedWindow();

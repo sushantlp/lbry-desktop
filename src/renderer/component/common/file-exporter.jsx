@@ -9,7 +9,7 @@ import parseData from 'util/parse-data';
 import { remote } from 'electron';
 // @endif
 // @if TARGET='web'
-import { remote } from '../../../web/stubs';
+import { remote } from 'web/stubs';
 // @endif
 
 type Props = {
