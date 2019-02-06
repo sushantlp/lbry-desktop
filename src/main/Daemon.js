@@ -12,12 +12,12 @@ export default class Daemon {
   }
 
   launch() {
-    this.subprocess = spawn(Daemon.path);
+    this.subprocess = spawn(Daemon.path, ['start']);
 
     this.subprocess.stdout.on('data', data => console.log(`Daemon: ${data}`));
     this.subprocess.stderr.on('data', data => console.error(`Daemon: ${data}`));
     this.subprocess.on('exit', () => this.fire('exit'));
-    this.subprocess.on('error', error => console.error(`Daemon: ${error}`));
+    this.subprocess.on('error', error => console.error(`Daemon error: ${error}`));
   }
 
   quit() {
