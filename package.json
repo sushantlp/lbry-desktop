@@ -25,6 +25,7 @@
     "build": "yarn compile && electron-builder build",
     "build:dir": "yarn build -- --dir -c.compression=store -c.mac.identity=null",
     "dev": "electron-webpack dev",
+    "dev:internal-apis": "LBRY_API_URL='http://localhost:8080' yarn dev",
     "lint": "eslint 'src/**/*.{js,jsx}' --fix && flow",
     "format": "prettier 'src/**/*.{js,jsx,scss,json}' --write",
     "flow-defs": "flow-typed install",
