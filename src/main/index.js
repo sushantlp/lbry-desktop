@@ -2,12 +2,12 @@
 // Module imports
 import keytar from 'keytar';
 import SemVer from 'semver';
-import findProcess from 'find-process';
 import url from 'url';
 import https from 'https';
 import { app, dialog, ipcMain, session, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import isDev from 'electron-is-dev';
+import { Lbry } from 'lbry-redux';
 import Daemon from './Daemon';
 import createTray from './createTray';
 import createWindow from './createWindow';
@@ -65,10 +65,15 @@ if (isDev) {
 }
 
 app.on('ready', async () => {
-  // Windows WMIC returns lbrynet start with 2 spaces. https://github.com/yibn2008/find-process/issues/18
-  const processListArgs = process.platform === 'win32' ? 'lbrynet  start' : 'lbrynet start';
-  const processList = await findProcess('name', processListArgs);
-  const isDaemonRunning = processList.length > 0;
+  let isDaemonRunning = false;
+  await Lbry.status()
+    .then(() => {
+      isDaemonRunning = true;
+      console.log('SDK already running');
+    })
+    .catch(() => {
+      console.log('Starting SDK');
+    });
 
   if (!isDaemonRunning) {
     daemon = new Daemon();
