@@ -10,12 +10,11 @@ type Props = {
   uri: string,
   isResolvingUri: boolean,
   isSearchResult: boolean,
-  totalItems: number,
+  totalPages: number,
   size: string,
   claim: ?Claim,
   resolveUri: string => void,
   navigate: (string, ?{}) => void,
-  buttonStyle: string,
 };
 
 class ChannelTile extends React.PureComponent<Props> {
@@ -38,16 +37,7 @@ class ChannelTile extends React.PureComponent<Props> {
   }
 
   render() {
-    const {
-      claim,
-      navigate,
-      isResolvingUri,
-      isSearchResult,
-      totalItems,
-      uri,
-      size,
-      buttonStyle,
-    } = this.props;
+    const { claim, navigate, isResolvingUri, isSearchResult, totalPages, uri, size } = this.props;
 
     let channelName;
     let subscriptionUri;
@@ -56,7 +46,8 @@ class ChannelTile extends React.PureComponent<Props> {
       subscriptionUri = `lbry://${claim.permanent_url}`;
     }
 
-    const onClick = () => navigate('/show', { uri });
+    const onClick = () =>
+      channelName ? navigate('/show', { uri, page: 1 }) : navigate('/show', { uri });
 
     return (
       <section
@@ -77,12 +68,12 @@ class ChannelTile extends React.PureComponent<Props> {
                 <TruncatedText text={channelName || uri} lines={1} />
               </div>
               <div className="media__subtitle">
-                {totalItems > 0 && (
+                {totalPages > 0 && (
                   <span>
-                    {totalItems} {totalItems === 1 ? 'file' : 'files'}
+                    {totalPages} {totalPages === 1 ? 'file' : 'files'}
                   </span>
                 )}
-                {!isResolvingUri && !totalItems && <span>This is an empty channel.</span>}
+                {!isResolvingUri && !totalPages && <span>This is an empty channel.</span>}
               </div>
             </React.Fragment>
           )}

@@ -231,20 +231,24 @@ ipcMain.on('version-info-requested', () => {
 
     res.on('end', () => {
       const tagName = JSON.parse(result).tag_name;
-      const [, remoteVersion] = tagName.match(/^v([\d.]+(?:-?rc\d+)?)$/);
-      if (!remoteVersion) {
-        if (rendererWindow) {
-          rendererWindow.webContents.send('version-info-received', null);
+      if (tagName) {
+        const [, remoteVersion] = tagName.match(/^v([\d.]+(?:-?rc\d+)?)$/);
+        if (!remoteVersion) {
+          if (rendererWindow) {
+            rendererWindow.webContents.send('version-info-received', localVersion);
+          }
+        } else {
+          const upgradeAvailable = SemVer.gt(formatRc(remoteVersion), formatRc(localVersion));
+          if (rendererWindow) {
+            rendererWindow.webContents.send('version-info-received', {
+              remoteVersion,
+              localVersion,
+              upgradeAvailable,
+            });
+          }
         }
-      } else {
-        const upgradeAvailable = SemVer.gt(formatRc(remoteVersion), formatRc(localVersion));
-        if (rendererWindow) {
-          rendererWindow.webContents.send('version-info-received', {
-            remoteVersion,
-            localVersion,
-            upgradeAvailable,
-          });
-        }
+      } else if (rendererWindow) {
+        rendererWindow.webContents.send('version-info-received', localVersion);
       }
     });
   };
