@@ -18,8 +18,10 @@ import {
 } from 'lbry-redux';
 import { selectShowNsfw, makeSelectClientSetting } from 'redux/selectors/settings';
 import { makeSelectIsSubscribed } from 'redux/selectors/subscriptions';
+import { selectFileTags } from 'redux/selectors/file_tag';
 import { doPrepareEdit } from 'redux/actions/publish';
 import { doOpenModal } from 'redux/actions/app';
+import { doFetchFileTags, doAddNewFileTag, doDeleteFileTag } from 'redux/actions/file_tag';
 import FilePage from './view';
 
 const select = (state, props) => ({
@@ -35,12 +37,16 @@ const select = (state, props) => ({
   autoplay: makeSelectClientSetting(settings.AUTOPLAY)(state),
   isSubscribed: makeSelectIsSubscribed(props.uri)(state),
   channelUri: makeSelectChannelForClaimUri(props.uri, true)(state),
+  fileTags: selectFileTags(state),
 });
 
 const perform = dispatch => ({
   navigate: (path, params) => dispatch(doNavigate(path, params)),
   fetchFileInfo: uri => dispatch(doFetchFileInfo(uri)),
   fetchCostInfo: uri => dispatch(doFetchCostInfoForUri(uri)),
+  fetchFileTags: claimId => dispatch(doFetchFileTags(claimId)),
+  addFileTag: (tag, claimid) => dispatch(doAddNewFileTag(tag, claimid)),
+  deleteFileTag: (tag, claimid) => dispatch(doDeleteFileTag(tag, claimid)),
   openModal: (modal, props) => dispatch(doOpenModal(modal, props)),
   prepareEdit: (publishData, uri) => dispatch(doPrepareEdit(publishData, uri)),
   setClientSetting: (key, value) => dispatch(doSetClientSetting(key, value)),

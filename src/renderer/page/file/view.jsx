@@ -4,7 +4,7 @@ import type { FileInfo } from 'types/file_info';
 import * as MODALS from 'constants/modal_types';
 import * as icons from 'constants/icons';
 import * as React from 'react';
-import { buildURI, normalizeURI } from 'lbry-redux';
+import { buildURI, normalizeURI, parseURI } from 'lbry-redux';
 import FileViewer from 'component/fileViewer';
 import Thumbnail from 'component/common/thumbnail';
 import FilePrice from 'component/filePrice';
@@ -20,6 +20,7 @@ import FileDownloadLink from 'component/fileDownloadLink';
 import classnames from 'classnames';
 import getMediaType from 'util/get-media-type';
 import RecommendedContent from 'component/recommendedContent';
+import ReactTags from 'react-tag-autocomplete';
 
 type Props = {
   claim: Claim,
@@ -41,6 +42,10 @@ type Props = {
   navigate: (string, ?{}) => void,
   openModal: (id: string, { uri: string }) => void,
   markSubscriptionRead: (string, string) => void,
+  addFileTag: (string, string) => void,
+  deleteFileTag: (string, string) => void,
+  fetchFileTags: void,
+  fileTags: Array<string>,
 };
 
 class FilePage extends React.Component<Props> {
@@ -57,14 +62,29 @@ class FilePage extends React.Component<Props> {
     'application',
   ];
 
+  constructor() {
+    super();
+    this.handleAdd = this.handleAdd.bind(this);
+    this.handleRemove = this.handleRemove.bind(this);
+  }
+
   componentDidMount() {
-    const { uri, fetchFileInfo, fetchCostInfo, setViewed, isSubscribed } = this.props;
+    const {
+      uri,
+      fetchFileInfo,
+      fetchFileTags,
+      fetchCostInfo,
+      setViewed,
+      isSubscribed,
+    } = this.props;
 
     if (isSubscribed) {
       this.removeFromSubscriptionNotifications();
     }
     // always refresh file info when entering file page
     fetchFileInfo(uri);
+    // refresh file tags
+    fetchFileTags(parseURI(uri).claimId);
 
     // See https://github.com/lbryio/lbry-desktop/pull/1563 for discussion
     fetchCostInfo(uri);
@@ -95,6 +115,16 @@ class FilePage extends React.Component<Props> {
     markSubscriptionRead(channelUri, uri);
   }
 
+  handleRemove(i) {
+    const { deleteFileTag, fileTags, uri } = this.props;
+    deleteFileTag(fileTags[i].name, parseURI(uri).claimId);
+  }
+
+  handleAdd(tag) {
+    const { addFileTag, uri } = this.props;
+    addFileTag(tag.name, parseURI(uri).claimId);
+  }
+
   render() {
     const {
       claim,
@@ -110,6 +140,7 @@ class FilePage extends React.Component<Props> {
       costInfo,
       fileInfo,
       channelUri,
+      fileTags,
     } = this.props;
 
     // File info
@@ -142,6 +173,8 @@ class FilePage extends React.Component<Props> {
 
       editUri = buildURI(uriObject);
     }
+
+    console.log('TAGS: ', fileTags);
 
     return (
       <Page notContained className="main--file-page">
@@ -228,7 +261,13 @@ class FilePage extends React.Component<Props> {
               <FileActions uri={uri} claimId={claim.claim_id} />
             </div>
           </div>
-
+          <ReactTags
+            tags={fileTags}
+            handleDelete={this.handleRemove}
+            handleAddition={this.handleAdd}
+            allowNew
+            placeholder="Add a new badge"
+          />
           <div className="media__info--large">
             <FileDetails uri={uri} />
           </div>

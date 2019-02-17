@@ -16,6 +16,7 @@ import { userReducer, rewardsReducer } from 'lbryinc';
 import shapeShiftReducer from 'redux/reducers/shape_shift';
 import subscriptionsReducer from 'redux/reducers/subscriptions';
 import publishReducer from 'redux/reducers/publish';
+import fileTagReducer from 'redux/reducers/file_tag';
 import { persistStore, autoRehydrate } from 'redux-persist';
 import createCompressor from 'redux-persist-transform-compress';
 import createFilter from 'redux-persist-transform-filter';
@@ -69,6 +70,7 @@ const reducers = combineReducers({
   publish: publishReducer,
   notifications: notificationsReducer,
   blacklist: blacklistReducer,
+  fileTag: fileTagReducer,
 });
 
 const bulkThunk = createBulkThunkMiddleware();
