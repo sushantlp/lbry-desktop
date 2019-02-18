@@ -1,18 +1,13 @@
 import { connect } from 'react-redux';
-import {
-  doResolveUri,
-  makeSelectClaimForUri,
-  makeSelectIsUriResolving,
-  makeSelectTotalPagesForChannel,
-} from 'lbry-redux';
+import { doResolveUri, makeSelectClaimForUri, makeSelectIsUriResolving } from 'lbry-redux';
 import { doNavigate } from 'redux/actions/navigation';
-import { PAGE_SIZE } from 'constants/claim';
+import { makeSelectTotalItemsForChannel } from 'redux/selectors/content';
 import ChannelTile from './view';
 
 const select = (state, props) => ({
   claim: makeSelectClaimForUri(props.uri)(state),
   isResolvingUri: makeSelectIsUriResolving(props.uri)(state),
-  totalPages: makeSelectTotalPagesForChannel(props.uri, PAGE_SIZE)(state),
+  totalItems: makeSelectTotalItemsForChannel(props.uri)(state),
 });
 
 const perform = dispatch => ({
