@@ -235,7 +235,8 @@
 
   // Quick fix to fix channel overlapping on the home page. This style shouldn't exist here.
   .btn--uri-indicator {
-    width: max-content;
+    width: fit-content;
+    max-width: 100%;
     text-align: left;
     overflow: hidden;
     text-overflow: ellipsis;
