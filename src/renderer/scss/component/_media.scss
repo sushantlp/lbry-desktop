@@ -26,6 +26,7 @@
   .media__info {
     margin-left: var(--spacing-vertical-medium);
     width: calc(80% - 20rem);
+    min-width: 40rem;
   }
 }
 
@@ -38,7 +39,7 @@
 
   .media__info {
     margin-left: var(--spacing-vertical-large);
-    width: calc(80% - 30rem);
+    flex: 1;
   }
 
   .media__subtext {
@@ -143,7 +144,7 @@
 
 .media__action-group {
   > *:not(:last-child) {
-    margin-right: var(--spacing-vertical-large);
+    margin-right: var(--spacing-vertical-medium);
   }
 }
 
@@ -193,6 +194,7 @@
 
 .media__subtitle {
   font-size: 0.8em;
+  color: rgba($lbry-black, 0.8);
 }
 
 .media__subtitle--large {
@@ -412,7 +414,7 @@
       color: $lbry-white;
     }
 
-    .media__subtext {
+    .media__subtitle {
       color: mix($lbry-cyan-5, $lbry-white, 20%);
     }
   }

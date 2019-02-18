@@ -1,40 +1,31 @@
 // @flow
-import * as SETTINGS from 'constants/settings';
 import * as ICONS from 'constants/icons';
 import * as React from 'react';
-import { isURIValid, normalizeURI, parseURI } from 'lbry-redux';
+import { isURIValid, normalizeURI, parseURI, SEARCH_OPTIONS } from 'lbry-redux';
 import FileTile from 'component/fileTile';
 import ChannelTile from 'component/channelTile';
 import FileListSearch from 'component/fileListSearch';
 import Page from 'component/page';
 import ToolTip from 'component/common/tooltip';
 import Icon from 'component/common/icon';
+import SearchOptions from 'component/searchOptions';
 
 type Props = {
   query: ?string,
-  resultCount: number,
-  setClientSetting: (string, number | boolean) => void,
+  queryParams: {
+    resultCount: number,
+    includeFiles: boolean,
+    includeChannels: boolean,
+    includeDownloads: boolean,
+    includeAudio: boolean,
+    includeVideo: boolean,
+    includeText: boolean,
+  },
 };
 
 class SearchPage extends React.PureComponent<Props> {
-  constructor() {
-    super();
-    (this: any).onShowUnavailableChange = this.onShowUnavailableChange.bind(this);
-    (this: any).onSearchResultCountChange = this.onSearchResultCountChange.bind(this);
-  }
-
-  onSearchResultCountChange(event: SyntheticInputEvent<*>) {
-    const count = Number(event.target.value);
-    this.props.setClientSetting(SETTINGS.RESULT_COUNT, count);
-  }
-
-  onShowUnavailableChange(event: SyntheticInputEvent<*>) {
-    this.props.setClientSetting(SETTINGS.SHOW_UNAVAILABLE, event.target.checked);
-  }
-
   render() {
-    const { query, resultCount } = this.props;
-
+    const { query } = this.props;
     const isValid = isURIValid(query);
 
     let uri;
@@ -69,14 +60,9 @@ class SearchPage extends React.PureComponent<Props> {
               </header>
             )}
 
-          {/*
-            Commented out until I figure out what to do with it in my next PR 
-            <div>
-              <FormField type="text" value={resultCount} label={__("Returned results")} / 
-            </div>
-          */}
-
           <div className="search__results-wrapper">
+            <SearchOptions />
+
             <FileListSearch query={query} />
             <div className="help">{__('These search results are provided by LBRY, Inc.')}</div>
           </div>
